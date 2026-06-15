@@ -25,6 +25,6 @@ cue4parse = "cue4parse.cli:main"
 packages = ["src/cue4parse"]
 
 [project.urls]
-Homepage = "https://pypi.org/project/cue4parse/"
+Homepage = "https://github.com/joric/CUE4Parse-Python/wiki"
 Repository = "https://github.com/joric/CUE4Parse-Python"
 Issues = "https://github.com/joric/CUE4Parse-Python/issues"
