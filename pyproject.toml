@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cue4parse"
-version = "0.0.2"
+version = "0.0.3"
 description = "CUE4Parse Python wrapper and CLI tool to extract packages from Unreal Engine games"
 requires-python = ">=3.9"
 dependencies = ["pythonnet>=3.0"]
@@ -23,3 +23,8 @@ cue4parse = "cue4parse.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/cue4parse"]
+
+[project.urls]
+Homepage = "https://pypi.org/project/cue4parse/"
+Repository = "https://github.com/joric/CUE4Parse-Python"
+Issues = "https://github.com/joric/CUE4Parse-Python/issues"
