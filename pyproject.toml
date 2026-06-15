@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cue4parse"
+version = "0.1.0"
+description = "CUE4Parse Python wrapper and CLI tool to extract packages from Unreal Engine games"
+requires-python = ">=3.9"
+dependencies = ["pythonnet>=3.0"]
+readme = "README.md"
+license = { text = "Unlicense" }
+authors = [{ name = "joric", email = "joric@users.noreply.github.com" }]
+keywords = ["unreal", "cue4parse", "cli"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[project.scripts]
+cue4parse = "cue4parse.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cue4parse"]
