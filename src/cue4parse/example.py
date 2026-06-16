@@ -27,8 +27,7 @@ def main():
     name_filter = lambda name: 'Lifepod' in str(name)
 
     for export in exports:
-        name = str(export)
-        if not name_filter(name):
+        if not name_filter(export.Name):
             continue
         print(export.ExportType)
 
