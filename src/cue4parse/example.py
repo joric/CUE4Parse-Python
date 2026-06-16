@@ -24,12 +24,12 @@ def main():
 
     exports = package.GetExports()
 
-    name_filter = lambda name: 'Lifepod' in str(name)
+    filter = lambda name: 'Lifepod' in str(name)
 
     for export in exports:
-        if not name_filter(export.Name):
+        if not filter(export.Name):
             continue
-        print(export.ExportType)
+        print(export.Name, export.ExportType)
 
     print(f'Finished in {time.perf_counter() - start:.4f}s')
 
