@@ -27,9 +27,9 @@ def main():
     filter = lambda name: 'Lifepod' in str(name)
 
     for export in exports:
-        if not filter(export.Name):
+        if not filter(export.ExportType):
             continue
-        print(export.Name, export.ExportType)
+        print(export.ExportType, export.Name)
 
     print(f'Finished in {time.perf_counter() - start:.4f}s')
 
