@@ -66,27 +66,19 @@ from Serilog.Events import LogEventLevel
 
 def _console(self, *args, **kwargs):
     console_method = next(
-        method
-        for typ in System.Reflection.Assembly.Load("Serilog.Sinks.Console").GetTypes()
-        if typ.IsSealed and typ.IsAbstract
+        method for typ in System.Reflection.Assembly.Load("Serilog.Sinks.Console").GetTypes()
         for method in typ.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
-        if method.Name == "Console"
-        and method.GetParameters()
-        and method.GetParameters()[0].ParameterType == clr.GetClrType(LoggerSinkConfiguration)
+        if method.Name == "Console" and (params := method.GetParameters())
+        and params[0].ParameterType == clr.GetClrType(LoggerSinkConfiguration)
     )
-    params = console_method.GetParameters()
-    values = [System.Type.Missing] * len(params)
-    values[0] = self
-    for i, arg in enumerate(args, 1):
-        values[i] = arg
-    for i, p in enumerate(params):
-        if p.Name == "standardErrorFromLevel":
-            values[i] = LogEventLevel.Verbose
-    for name, val in kwargs.items():
-        for i, p in enumerate(params):
-            if p.Name == name:
-                values[i] = val
-                break
+    overrides = {"standardErrorFromLevel": LogEventLevel.Verbose, **kwargs}
+    positional = (self,) + args
+    values = [
+        overrides[p.Name] if p.Name in overrides
+        else positional[i] if i < len(positional)
+        else System.Type.Missing
+        for i, p in enumerate(console_method.GetParameters())
+    ]
     return console_method.Invoke(None, System.Array[System.Object](values))
 
 setattr(LoggerSinkConfiguration, "Console", _console)
