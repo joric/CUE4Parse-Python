@@ -64,23 +64,47 @@ from Serilog import Log, LoggerConfiguration
 from Serilog.Configuration import LoggerSinkConfiguration
 from Serilog.Events import LogEventLevel
 
-def _console(self, *args, **kwargs):
-    console_method = next(
-        method for typ in System.Reflection.Assembly.Load("Serilog.Sinks.Console").GetTypes()
-        for method in typ.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
-        if method.Name == "Console" and (params := method.GetParameters())
-        and params[0].ParameterType == clr.GetClrType(LoggerSinkConfiguration)
-    )
-    overrides = {"standardErrorFromLevel": LogEventLevel.Verbose, **kwargs}
-    positional = (self,) + args
-    values = [
-        overrides[p.Name] if p.Name in overrides
-        else positional[i] if i < len(positional)
-        else System.Type.Missing
-        for i, p in enumerate(console_method.GetParameters())
-    ]
-    return console_method.Invoke(None, System.Array[System.Object](values))
+def patch_serilog_console() -> None:
+    flags = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static
+    sink_type = clr.GetClrType(LoggerSinkConfiguration)
+    logger_type = clr.GetClrType(LoggerConfiguration)
+    assembly = System.Reflection.Assembly.Load("Serilog.Sinks.Console")
 
-setattr(LoggerSinkConfiguration, "Console", _console)
+    console_method = next(
+        method
+        for typ in assembly.GetTypes()
+        for method in typ.GetMethods(flags)
+        if method.Name == "Console"
+        and (params := method.GetParameters())
+        and params[0].ParameterType == sink_type
+    )
+
+    parent_field = next(
+        field
+        for field in sink_type.GetFields(
+            System.Reflection.BindingFlags.Public
+            | System.Reflection.BindingFlags.NonPublic
+            | System.Reflection.BindingFlags.Instance
+        )
+        if field.FieldType == logger_type
+    )
+
+    def console(self, *args, **kwargs):
+        overrides = {"standardErrorFromLevel": LogEventLevel.Verbose, **kwargs}
+        positional = (self, *args)
+        values = [
+            overrides[p.Name]
+            if p.Name in overrides
+            else positional[i]
+            if i < len(positional)
+            else System.Type.Missing
+            for i, p in enumerate(console_method.GetParameters())
+        ]
+        console_method.Invoke(None, System.Array[System.Object](values))
+        return parent_field.GetValue(self)
+
+    setattr(LoggerSinkConfiguration, "Console", console)
+
+patch_serilog_console()
 
 Log.Logger = LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger()
