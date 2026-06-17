@@ -31,8 +31,3 @@ from CUE4Parse_Conversion.Textures import ETextureFormat, TextureDecoder, Textur
 from CUE4Parse_Conversion.Textures.BC import DetexHelper
 from CUE4Parse_Conversion.UEFormat.Enums import EFileCompressionFormat
 from CUE4Parse.UE4.Assets.Exports.Material import EMaterialFormat
-
-from System import *
-from Serilog import Log, LoggerConfiguration
-from Serilog.Events import LogEventLevel
-from Serilog.Configuration import LoggerSinkConfiguration
