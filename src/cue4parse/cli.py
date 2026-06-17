@@ -191,9 +191,9 @@ def execute(options: CliOptions) -> int:
     overwrite_files = options.yes
 
     if options.verbose:
-        Log.Logger = with_console(LoggerConfiguration().MinimumLevel.Verbose()).CreateLogger()
+        Log.Logger = LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger()
     else:
-        Log.Logger = with_console(LoggerConfiguration().MinimumLevel.Fatal()).CreateLogger()
+        Log.Logger = LoggerConfiguration().MinimumLevel.Fatal().WriteTo.Console().CreateLogger()
 
     try:
         game_version = parse_enum(EGame, options.game, "GAME_UE5_LATEST")

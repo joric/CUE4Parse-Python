@@ -1,4 +1,4 @@
-import time
+import time, sys
 from cue4parse import *
 
 GAME_DIR = r"E:\Games\Subnautica2\Subnautica2\Content\Paks"
@@ -7,7 +7,7 @@ MAPPINGS_FILE = r"E:\Games\Subnautica2\Subnautica2.usmap"
 def main():
     start = time.perf_counter()
 
-    Log.Logger = with_console(LoggerConfiguration().MinimumLevel.Verbose()).CreateLogger()
+    Log.Logger = LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Console().CreateLogger()
 
     version = VersionContainer(EGame.GAME_UE5_6, ETexturePlatform.DesktopMobile)
     provider = DefaultFileProvider(GAME_DIR, SearchOption.TopDirectoryOnly, version, StringComparer.OrdinalIgnoreCase)
@@ -31,7 +31,7 @@ def main():
             continue
         print(export.ExportType, export.Name)
 
-    print(f'Finished in {time.perf_counter() - start:.4f}s')
+    print(f'Finished in {time.perf_counter() - start:.4f}s', file=sys.stderr)
 
 if __name__ == '__main__':
     raise SystemExit(main())
