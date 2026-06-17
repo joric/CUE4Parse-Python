@@ -64,17 +64,16 @@ from Serilog import Log, LoggerConfiguration
 from Serilog.Configuration import LoggerSinkConfiguration
 from Serilog.Events import LogEventLevel
 
-console_method = next(
-    method
-    for typ in System.Reflection.Assembly.Load("Serilog.Sinks.Console").GetTypes()
-    if typ.IsSealed and typ.IsAbstract
-    for method in typ.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
-    if method.Name == "Console"
-    and method.GetParameters()
-    and method.GetParameters()[0].ParameterType == clr.GetClrType(LoggerSinkConfiguration)
-)
-
 def _console(self, *args, **kwargs):
+    console_method = next(
+        method
+        for typ in System.Reflection.Assembly.Load("Serilog.Sinks.Console").GetTypes()
+        if typ.IsSealed and typ.IsAbstract
+        for method in typ.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+        if method.Name == "Console"
+        and method.GetParameters()
+        and method.GetParameters()[0].ParameterType == clr.GetClrType(LoggerSinkConfiguration)
+    )
     params = console_method.GetParameters()
     values = [System.Type.Missing] * len(params)
     values[0] = self
